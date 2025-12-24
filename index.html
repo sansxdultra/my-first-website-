@@ -1,70 +1,631 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Purple Flower Rain</title>
-  <style>
-    body {
-      margin: 0;
-      overflow: hidden;
-      background: linear-gradient(to bottom, #1a0033, #2b004f);
-      height: 100vh;
-      font-family: Arial, sans-serif;
-    }
-
-    .content {
-      position: relative;
-      z-index: 10;
-      color: white;
-      text-align: center;
-      top: 40%;
-    }
-
-    .flower {
-      position: fixed;
-      top: -50px;
-      font-size: 24px;
-      color: #c084fc;
-      animation-name: fall;
-      animation-timing-function: linear;
-      pointer-events: none;
-    }
-
-    @keyframes fall {
-      to {
-        transform: translateY(110vh) rotate(360deg);
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dangerous Flower - Redemption</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            font-family: 'Arial Black', sans-serif;
+        }
+        
+        body {
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 1s;
+            position: relative;
+        }
+        
+        .container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        
+        .message-panel {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            text-align: center;
+            transition: all 1s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        #left-panel {
+            background: linear-gradient(45deg, #1a1a2e, #16213e);
+            color: white;
+            font-size: 3rem;
+            text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+            flex-direction: column;
+            gap: 30px;
+        }
+        
+        .game-area {
+            flex: 2;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .flower {
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            cursor: pointer;
+            transition: transform 0.3s, filter 0.3s;
+            animation: float 4s ease-in-out infinite;
+            z-index: 10;
+        }
+        
+        .petal {
+            position: absolute;
+            width: 45px;
+            height: 70px;
+            background: linear-gradient(to bottom, #ff6b6b, #ff4757);
+            border-radius: 50%;
+            transform-origin: bottom center;
+            transition: all 0.8s ease;
+            filter: drop-shadow(0 5px 5px rgba(0,0,0,0.3));
+        }
+        
+        .center {
+            position: absolute;
+            width: 35px;
+            height: 35px;
+            background: linear-gradient(45deg, #ffd32d, #ffa502);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 11;
+            filter: drop-shadow(0 0 5px gold);
+        }
+        
+        .stem {
+            position: absolute;
+            width: 12px;
+            height: 180px;
+            background: linear-gradient(to bottom, #2ed573, #1dd1a1);
+            top: 120px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 6px;
+            z-index: 5;
+        }
+        
+        .leaf {
+            position: absolute;
+            width: 35px;
+            height: 25px;
+            background: #2ed573;
+            border-radius: 50%;
+            top: 140px;
+            left: 60%;
+            transform: rotate(45deg);
+            z-index: 5;
+        }
+        
+        .death-message {
+            position: absolute;
+            top: 20%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 4.5rem;
+            color: white;
+            text-shadow: 0 0 25px rgba(255, 0, 0, 0.8);
+            opacity: 0;
+            transition: opacity 1.5s;
+            z-index: 100;
+            text-align: center;
+            line-height: 1.2;
+        }
+        
+        .reset-container {
+            position: absolute;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            opacity: 0;
+            transition: opacity 2s;
+            z-index: 1000;
+        }
+        
+        #reset-button {
+            padding: 25px 60px;
+            font-size: 2.5rem;
+            background: linear-gradient(45deg, #1a1a2e, #16213e);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.5s;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5),
+                        0 0 30px rgba(255, 255, 255, 0.1);
+            font-weight: bold;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        
+        #reset-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.7),
+                        0 0 50px rgba(255, 255, 255, 0.2);
+            background: linear-gradient(45deg, #ff6b6b, #ff4757);
+        }
+        
+        #reset-button:active {
+            transform: scale(0.95);
+        }
+        
+        .reset-message {
+            font-size: 1.5rem;
+            color: white;
+            text-align: center;
+            max-width: 600px;
+            line-height: 1.6;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            background: rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            border-radius: 10px;
+            backdrop-filter: blur(5px);
+        }
+        
+        @keyframes float {
+            0%, 100% { 
+                transform: translateX(-50%) translateY(0) rotate(0deg); 
+            }
+            25% { 
+                transform: translateX(-50%) translateY(-15px) rotate(5deg); 
+            }
+            75% { 
+                transform: translateX(-50%) translateY(-10px) rotate(-5deg); 
+            }
+        }
+        
+        @keyframes jump {
+            0% { bottom: 50px; transform: translateX(-50%) rotate(0deg); }
+            30% { bottom: 300px; transform: translateX(-50%) rotate(180deg); }
+            70% { bottom: 300px; transform: translateX(-50%) rotate(180deg); }
+            100% { bottom: 50px; transform: translateX(-50%) rotate(360deg); }
+        }
+        
+        @keyframes rainbow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(255, 255, 255, 0.2); }
+            50% { box-shadow: 0 0 40px rgba(255, 255, 255, 0.4); }
+        }
+        
+        .jumping {
+            animation: jump 1.5s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+        }
+        
+        .rainbow-bg {
+            background: linear-gradient(-45deg, 
+                #ff0000, #ff8000, #ffff00, #80ff00, 
+                #00ff80, #00ffff, #0080ff, #0000ff, 
+                #8000ff, #ff00ff, #ff0080, #ff0000);
+            background-size: 400% 400%;
+            animation: rainbow 8s ease infinite;
+        }
+        
+        .dead {
+            background: black !important;
+            color: white !important;
+            transition: all 2s ease;
+            box-shadow: inset 0 0 100px rgba(255, 0, 0, 0.1);
+        }
+        
+        .dead-flower {
+            filter: grayscale(100%) brightness(0.3) blur(2px);
+            animation: none !important;
+            transform: translateX(-50%) scale(0.8);
+            transition: all 3s;
+        }
+        
+        .fade-in {
+            opacity: 1 !important;
+        }
+        
+        .sin-message {
+            position: absolute;
+            top: 10px;
+            width: 90%;
+            font-size: 1.2rem;
+            color: #ff6b6b;
+            text-align: center;
+            line-height: 1.4;
+            opacity: 0.7;
+        }
+        
+        .grave {
+            position: absolute;
+            bottom: 0;
+            width: 200px;
+            height: 150px;
+            background: linear-gradient(to top, #333, #666);
+            border-radius: 10px 10px 0 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 3s;
+        }
+        
+        .grave::after {
+            content: "RIP";
+            color: white;
+            font-size: 2rem;
+            opacity: 0.5;
+        }
+        
+        .show-grave {
+            opacity: 1;
+        }
+    </style>
 </head>
 <body>
+    <div class="container">
+        <div class="message-panel" id="left-panel">
+            <div id="message">Touch the flower if you dare...</div>
+            <div class="sin-message" id="sin-message"></div>
+        </div>
+        <div class="game-area" id="game-area">
+            <div class="grave" id="grave"></div>
+            <div class="death-message" id="death-message">YOU ARE ALREADY DEAD</div>
+            <div class="reset-container" id="reset-container">
+                <button id="reset-button">RESET</button>
+                <div class="reset-message">
+                    You committed terrible deeds...<br>
+                    You can be a good person.<br>
+                    Reset your wish to begin anew.
+                </div>
+            </div>
+            <div class="flower" id="flower">
+                <div class="stem"></div>
+                <div class="leaf"></div>
+                <!-- Petals and center added by JS -->
+            </div>
+        </div>
+    </div>
 
-  <div class="content">
-    <h1>🌸 Welcome</h1>
-    <p>Purple flowers falling gently</p>
-  </div>
-
-  <script>
-    const flowers = ["🌸", "🌺", "💜"];
-
-    function createFlower() {
-      const flower = document.createElement("div");
-      flower.classList.add("flower");
-      flower.innerText = flowers[Math.floor(Math.random() * flowers.length)];
-
-      flower.style.left = Math.random() * window.innerWidth + "px";
-      flower.style.animationDuration = 5 + Math.random() * 5 + "s";
-      flower.style.opacity = Math.random();
-
-      document.body.appendChild(flower);
-
-      setTimeout(() => {
-        flower.remove();
-      }, 10000);
-    }
-
-    setInterval(createFlower, 300);
-  </script>
-
+    <script>
+        // Elements
+        const flower = document.getElementById('flower');
+        const gameArea = document.getElementById('game-area');
+        const leftPanel = document.getElementById('left-panel');
+        const message = document.getElementById('message');
+        const deathMessage = document.getElementById('death-message');
+        const resetContainer = document.getElementById('reset-container');
+        const resetButton = document.getElementById('reset-button');
+        const sinMessage = document.getElementById('sin-message');
+        const grave = document.getElementById('grave');
+        const body = document.body;
+        
+        // State variables
+        let isDead = false;
+        let touchCount = 0;
+        let isJumping = false;
+        let colorInterval;
+        let sins = [
+            "You tempted fate",
+            "You ignored the warning",
+            "You sought forbidden beauty",
+            "You desired the cursed bloom",
+            "You fell to curiosity",
+            "You embraced the danger",
+            "You touched what shouldn't be touched",
+            "You defied natural law"
+        ];
+        let currentSin = 0;
+        
+        // Create petals
+        function createPetal(angle, index) {
+            const petal = document.createElement('div');
+            petal.className = 'petal';
+            petal.style.transform = `rotate(${angle}deg) translateY(-35px)`;
+            petal.style.zIndex = index % 2 === 0 ? '2' : '1';
+            return petal;
+        }
+        
+        // Initialize flower with petals
+        function initFlower() {
+            // Clear existing petals
+            const existingPetals = flower.querySelectorAll('.petal, .center');
+            existingPetals.forEach(el => el.remove());
+            
+            // Create new petals
+            for (let i = 0; i < 8; i++) {
+                flower.appendChild(createPetal(i * 45, i));
+            }
+            
+            // Add center
+            const center = document.createElement('div');
+            center.className = 'center';
+            flower.appendChild(center);
+            
+            // Reset flower style
+            flower.classList.remove('dead-flower');
+            flower.style.filter = '';
+            flower.style.animation = 'float 4s ease-in-out infinite';
+        }
+        
+        // Random color generator
+        function getRandomColor() {
+            const colors = [
+                '#FF6B6B', '#FF8E53', '#FFD166', '#06D6A0',
+                '#118AB2', '#073B4C', '#EF476F', '#7209B7',
+                '#3A86FF', '#FB5607', '#8338EC', '#FF006E',
+                '#FFBE0B', '#FB5607', '#FF006E', '#8338EC'
+            ];
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+        
+        // Change flower colors
+        function changeFlowerColors() {
+            if (isDead) return;
+            
+            // Petal colors
+            const petals = flower.querySelectorAll('.petal');
+            petals.forEach(petal => {
+                const color1 = getRandomColor();
+                const color2 = getRandomColor();
+                petal.style.background = `linear-gradient(to bottom, ${color1}, ${color2})`;
+                petal.style.filter = `drop-shadow(0 5px 5px ${color1}40)`;
+            });
+            
+            // Center color
+            const center = flower.querySelector('.center');
+            if (center) {
+                const color1 = getRandomColor();
+                const color2 = getRandomColor();
+                center.style.background = `linear-gradient(45deg, ${color1}, ${color2})`;
+                center.style.filter = `drop-shadow(0 0 10px ${color1})`;
+            }
+            
+            // Stem and leaf color
+            const stem = flower.querySelector('.stem');
+            const leaf = flower.querySelector('.leaf');
+            if (stem && leaf) {
+                const stemColor = getRandomColor();
+                stem.style.background = `linear-gradient(to bottom, ${stemColor}, ${getRandomColor()})`;
+                leaf.style.background = stemColor;
+            }
+        }
+        
+        // Make flower jump
+        function makeFlowerJump() {
+            if (isJumping || isDead) return;
+            
+            isJumping = true;
+            flower.classList.add('jumping');
+            
+            // Change colors during jump
+            changeFlowerColors();
+            
+            setTimeout(() => {
+                flower.classList.remove('jumping');
+                isJumping = false;
+            }, 1500);
+        }
+        
+        // Start rainbow background
+        function startRainbowBackground() {
+            body.classList.add('rainbow-bg');
+            body.style.animation = 'rainbow 8s ease infinite';
+        }
+        
+        // Show death sequence
+        function showDeath() {
+            isDead = true;
+            
+            // Update left panel
+            leftPanel.classList.add('dead');
+            message.style.opacity = '0';
+            setTimeout(() => {
+                message.remove();
+                sinMessage.textContent = "YOUR SINS: " + sins[currentSin];
+                sinMessage.style.opacity = '1';
+            }, 1000);
+            
+            // Kill flower
+            flower.classList.add('dead-flower');
+            flower.style.cursor = 'default';
+            
+            // Stop color changing
+            clearInterval(colorInterval);
+            
+            // Change background to black gradually
+            body.classList.remove('rainbow-bg');
+            body.style.animation = 'none';
+            
+            const fadeToBlack = setInterval(() => {
+                const currentBg = body.style.background || getComputedStyle(body).background;
+                if (!currentBg.includes('rgb(0, 0, 0)')) {
+                    body.style.background = 'linear-gradient(to bottom, #222, #000)';
+                } else {
+                    clearInterval(fadeToBlack);
+                }
+            }, 100);
+            
+            // Show grave
+            setTimeout(() => {
+                grave.classList.add('show-grave');
+            }, 2000);
+            
+            // Show death message
+            setTimeout(() => {
+                deathMessage.style.opacity = '1';
+                deathMessage.textContent = "YOU ARE\nALREADY\nDEAD";
+            }, 1500);
+            
+            // Show reset button after delay
+            setTimeout(() => {
+                resetContainer.classList.add('fade-in');
+                resetButton.style.animation = 'glow 2s infinite';
+            }, 4000);
+            
+            // Rotate sins message
+            setInterval(() => {
+                currentSin = (currentSin + 1) % sins.length;
+                sinMessage.textContent = "YOUR SINS: " + sins[currentSin];
+            }, 3000);
+        }
+        
+        // Handle flower click/touch
+        function handleFlowerClick() {
+            if (isDead) {
+                // Show death message again
+                deathMessage.style.opacity = '1';
+                setTimeout(() => {
+                    deathMessage.style.opacity = '0';
+                }, 2000);
+                return;
+            }
+            
+            touchCount++;
+            
+            if (touchCount === 1) {
+                // First touch - Warning
+                message.innerHTML = "YOU TOUCHED<br>THE FLOWER<br><span style='font-size: 2.5rem; color: #ff6b6b'>YOU'RE GONNA DIE</span>";
+                message.style.textShadow = '0 0 20px red';
+                leftPanel.style.background = 'linear-gradient(45deg, #8b0000, #660000)';
+                leftPanel.style.boxShadow = 'inset 0 0 50px rgba(255, 0, 0, 0.3)';
+                startRainbowBackground();
+                
+                // Start rapid color changing
+                clearInterval(colorInterval);
+                colorInterval = setInterval(changeFlowerColors, 300);
+                
+                // Make flower jump automatically
+                setInterval(() => {
+                    if (!isJumping && !isDead) {
+                        makeFlowerJump();
+                    }
+                }, 2000);
+                
+                // Make flower jump now
+                makeFlowerJump();
+                
+            } else if (touchCount === 2) {
+                // Second touch - Death
+                showDeath();
+            } else if (touchCount > 2) {
+                // Additional touches after death
+                deathMessage.style.opacity = '1';
+                setTimeout(() => {
+                    deathMessage.style.opacity = '0';
+                }, 1000);
+            }
+            
+            // Always jump on click if alive
+            if (!isDead) {
+                makeFlowerJump();
+            }
+        }
+        
+        // Reset everything
+        function resetGame() {
+            // Reset state
+            isDead = false;
+            touchCount = 0;
+            isJumping = false;
+            currentSin = 0;
+            
+            // Reset visuals
+            body.classList.remove('rainbow-bg');
+            body.style.background = '';
+            body.style.animation = '';
+            
+            leftPanel.classList.remove('dead');
+            leftPanel.style.background = 'linear-gradient(45deg, #1a1a2e, #16213e)';
+            leftPanel.style.boxShadow = 'none';
+            
+            message.innerHTML = "Touch the flower if you dare...";
+            message.style.opacity = '1';
+            message.style.textShadow = '0 0 10px rgba(255, 0, 0, 0.5)';
+            
+            sinMessage.textContent = '';
+            sinMessage.style.opacity = '0';
+            
+            deathMessage.style.opacity = '0';
+            resetContainer.classList.remove('fade-in');
+            grave.classList.remove('show-grave');
+            
+            // Reset flower
+            flower.classList.remove('dead-flower');
+            flower.style.cursor = 'pointer';
+            flower.style.animation = 'float 4s ease-in-out infinite';
+            
+            // Reinitialize flower
+            initFlower();
+            
+            // Start slow color changes
+            clearInterval(colorInterval);
+            colorInterval = setInterval(changeFlowerColors, 2000);
+            
+            // Initial jump
+            setTimeout(() => {
+                makeFlowerJump();
+            }, 1000);
+        }
+        
+        // Initialize
+        function init() {
+            initFlower();
+            
+            // Event listeners
+            flower.addEventListener('click', handleFlowerClick);
+            flower.addEventListener('touchstart', function(e) {
+                e.preventDefault();
+                handleFlowerClick();
+            });
+            
+            resetButton.addEventListener('click', resetGame);
+            
+            // Initial color change
+            setTimeout(changeFlowerColors, 500);
+            
+            // Initial jump
+            setTimeout(() => {
+                makeFlowerJump();
+            }, 1000);
+            
+            // Start slow color changes
+            colorInterval = setInterval(changeFlowerColors, 2000);
+            
+            console.log("🌹 DANGEROUS FLOWER GAME 🌹");
+            console.log("Touch the flower twice to see the full experience");
+            console.log("After death, use the RESET button for redemption");
+        }
+        
+        // Start the game
+        init();
+    </script>
 </body>
 </html>
