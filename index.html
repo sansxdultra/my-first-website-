@@ -1,165 +1,907 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Flower Curse</title>
-
-<style>
-html, body {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  font-family: Arial, sans-serif;
-}
-
-/* Rainbow forever */
-body {
-  animation: rainbow 10s linear infinite;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-@keyframes rainbow {
-  0% { background: red; }
-  14% { background: orange; }
-  28% { background: yellow; }
-  42% { background: green; }
-  57% { background: cyan; }
-  71% { background: blue; }
-  85% { background: purple; }
-  100% { background: red; }
-}
-
-/* Main flower */
-.flower {
-  width: 120px;
-  height: 120px;
-  background: pink;
-  border-radius: 50%;
-  cursor: pointer;
-  transition: transform 0.3s, background 0.3s;
-  z-index: 2;
-}
-
-.flower:hover {
-  transform: translateY(-70px);
-  background: hotpink;
-}
-
-/* Small flowers */
-.small {
-  position: absolute;
-  width: 25px;
-  height: 25px;
-  background: violet;
-  border-radius: 50%;
-  animation: float 6s infinite alternate;
-}
-
-@keyframes float {
-  from { transform: translateY(0); }
-  to { transform: translateY(-40px); }
-}
-
-/* Side text */
-.message {
-  position: fixed;
-  right: 20px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: white;
-  font-size: 18px;
-  max-width: 260px;
-  text-align: right;
-}
-
-/* Death mode */
-.dead {
-  animation: none !important;
-  background: black !important;
-}
-
-.dead .message {
-  color: white;
-  font-size: 26px;
-  font-weight: bold;
-}
-
-/* Reset UI */
-.reset-box {
-  position: fixed;
-  bottom: 80px;
-  text-align: center;
-  color: white;
-  display: none;
-}
-
-.reset-box button {
-  padding: 12px 24px;
-  font-size: 18px;
-  cursor: pointer;
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flower Cascade - Falling Petals of Fate</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            font-family: 'Arial Black', sans-serif;
+        }
+        
+        body {
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 1s ease;
+            position: relative;
+            background: #0a0a1a;
+        }
+        
+        .container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        
+        .message-panel {
+            flex: 1;
+            padding: 40px;
+            text-align: center;
+            transition: all 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 2;
+            background: linear-gradient(135deg, rgba(26, 26, 46, 0.95), rgba(15, 52, 96, 0.95));
+            border-right: 4px solid rgba(255, 107, 107, 0.3);
+        }
+        
+        .flower-garden {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+        }
+        
+        .garden-flower {
+            width: 120px;
+            height: 120px;
+            position: relative;
+            margin: 15px 0;
+            transition: all 0.5s ease;
+            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.3));
+        }
+        
+        .garden-petal {
+            position: absolute;
+            width: 45px;
+            height: 65px;
+            border-radius: 50%;
+            transform-origin: center center;
+            transition: all 0.8s ease;
+            background: linear-gradient(135deg, var(--petal-color1), var(--petal-color2));
+            opacity: 0.9;
+        }
+        
+        .garden-center {
+            position: absolute;
+            width: 35px;
+            height: 35px;
+            background: linear-gradient(135deg, var(--center-color1), var(--center-color2));
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 11;
+            filter: drop-shadow(0 0 10px gold);
+        }
+        
+        .garden-stem {
+            position: absolute;
+            width: 12px;
+            height: 180px;
+            background: linear-gradient(to bottom, var(--stem-color1), var(--stem-color2));
+            top: 120px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 6px;
+            z-index: 5;
+        }
+        
+        .panel-message {
+            font-size: 2.8rem;
+            color: white;
+            text-align: center;
+            line-height: 1.3;
+            margin-top: 40px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 90%;
+        }
+        
+        .flower-counter {
+            position: absolute;
+            bottom: 30px;
+            font-size: 1.5rem;
+            color: white;
+            background: rgba(0,0,0,0.5);
+            padding: 15px 25px;
+            border-radius: 10px;
+            z-index: 1000;
+            opacity: 0.8;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .game-area {
+            flex: 2;
+            position: relative;
+            overflow: hidden;
+            background: #000;
+            z-index: 1;
+        }
+        
+        .falling-flower {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            cursor: pointer;
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 20;
+            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.5));
+            transform-origin: center center;
+        }
+        
+        .falling-petal {
+            position: absolute;
+            width: 30px;
+            height: 45px;
+            border-radius: 50%;
+            transform-origin: center center;
+            transition: all 0.6s ease;
+            background: linear-gradient(135deg, var(--petal-color1), var(--petal-color2));
+        }
+        
+        .falling-center {
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            background: linear-gradient(135deg, var(--center-color1), var(--center-color2));
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 11;
+            filter: drop-shadow(0 0 8px var(--center-color1));
+        }
+        
+        .death-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 5rem;
+            color: white;
+            text-shadow: 0 0 40px rgba(255, 0, 0, 0.9);
+            opacity: 0;
+            transition: opacity 2s;
+            z-index: 100;
+            text-align: center;
+            line-height: 1.2;
+            animation: pulse 2s infinite;
+        }
+        
+        .asshole-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 4rem;
+            color: #ff6b6b;
+            text-shadow: 0 0 30px black;
+            opacity: 0;
+            transition: opacity 2s;
+            z-index: 150;
+            text-align: center;
+            line-height: 1.2;
+            background: rgba(0, 0, 0, 0.9);
+            padding: 50px;
+            border-radius: 25px;
+            border: 4px solid #ff6b6b;
+        }
+        
+        .reset-container {
+            position: absolute;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 25px;
+            opacity: 0;
+            transition: opacity 2s;
+            z-index: 1000;
+        }
+        
+        #reset-button {
+            padding: 25px 60px;
+            font-size: 2.8rem;
+            background: linear-gradient(135deg, #1a1a2e, #0f3460);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6),
+                        0 0 40px rgba(255, 255, 255, 0.15);
+            font-weight: bold;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        #reset-button:hover {
+            transform: scale(1.12);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.8),
+                        0 0 60px rgba(255, 107, 107, 0.3);
+            background: linear-gradient(135deg, #ff6b6b, #ff4757);
+        }
+        
+        .reset-message {
+            font-size: 1.8rem;
+            color: white;
+            text-align: center;
+            max-width: 700px;
+            line-height: 1.8;
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
+            background: rgba(0, 0, 0, 0.7);
+            padding: 25px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255,255,255,0.1);
+        }
+        
+        .petal-particle {
+            position: absolute;
+            width: 20px;
+            height: 30px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 5;
+            opacity: 0.8;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(10deg); }
+        }
+        
+        @keyframes fall {
+            0% { 
+                transform: translateY(-100px) rotate(0deg); 
+                opacity: 1;
+            }
+            100% { 
+                transform: translateY(calc(100vh + 100px)) rotate(360deg); 
+                opacity: 0;
+            }
+        }
+        
+        @keyframes jump {
+            0% { transform: translateY(var(--current-y)) scale(1) rotate(var(--current-rotate)); }
+            25% { transform: translateY(calc(var(--current-y) - 200px)) scale(1.2) rotate(calc(var(--current-rotate) + 180deg)); }
+            50% { transform: translateY(calc(var(--current-y) - 200px)) scale(1.2) rotate(calc(var(--current-rotate) + 360deg)); }
+            75% { transform: translateY(calc(var(--current-y) - 100px)) scale(1.1) rotate(calc(var(--current-rotate) + 540deg)); }
+            100% { transform: translateY(var(--current-y)) scale(1) rotate(calc(var(--current-rotate) + 720deg)); }
+        }
+        
+        @keyframes rainbow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            50% { opacity: 0.8; transform: translate(-50%, -50%) scale(1.05); }
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateY(var(--current-y)) rotate(var(--current-rotate)); }
+            10%, 30%, 50%, 70%, 90% { transform: translateY(var(--current-y)) rotate(calc(var(--current-rotate) + 5deg)) scale(1.1); }
+            20%, 40%, 60%, 80% { transform: translateY(var(--current-y)) rotate(calc(var(--current-rotate) - 5deg)) scale(1.1); }
+        }
+        
+        .jumping {
+            animation: jump 1.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards !important;
+        }
+        
+        .falling {
+            animation: fall var(--fall-duration) linear forwards;
+        }
+        
+        .rainbow-bg {
+            background: linear-gradient(-45deg, 
+                #ff0000, #ff4000, #ff8000, #ffbf00,
+                #ffff00, #bfff00, #80ff00, #40ff00,
+                #00ff40, #00ff80, #00ffbf, #00ffff,
+                #0080ff, #0040ff, #4000ff, #8000ff,
+                #bf00ff, #ff00ff, #ff00bf, #ff0080,
+                #ff0040, #ff0000);
+            background-size: 500% 500%;
+            animation: rainbow 6s linear infinite;
+        }
+        
+        .dead-panel {
+            background: linear-gradient(135deg, #000000, #1a0000) !important;
+            border-right: 4px solid rgba(255, 0, 0, 0.5);
+        }
+        
+        .dead-flower {
+            filter: grayscale(100%) brightness(0.2) blur(3px);
+            animation: none !important;
+            cursor: not-allowed;
+        }
+        
+        .fade-in {
+            opacity: 1 !important;
+        }
+        
+        .asshole-mode {
+            animation: shake 0.5s ease-in-out infinite !important;
+        }
+        
+        .garden-title {
+            position: absolute;
+            top: 30px;
+            font-size: 2.5rem;
+            color: white;
+            text-shadow: 0 0 15px rgba(255, 107, 107, 0.8);
+            padding: 15px 30px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 15px;
+            border: 2px solid rgba(255, 107, 107, 0.3);
+        }
+        
+        .message-flower {
+            transform: scale(1.1);
+            filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.5)) !important;
+        }
+    </style>
 </head>
-
 <body>
+    <div class="container">
+        <div class="message-panel" id="message-panel">
+            <div class="garden-title" id="garden-title">🌺 FLOWER GARDEN 🌺</div>
+            <div class="flower-garden" id="flower-garden">
+                <!-- Garden flowers will be generated here -->
+            </div>
+            <div class="panel-message" id="panel-message">
+                Touch the falling flowers<br>Each has a message...
+            </div>
+            <div class="flower-counter" id="flower-counter">Flowers Touched: 0</div>
+        </div>
+        <div class="game-area" id="game-area">
+            <div class="death-message" id="death-message">YOU ARE ALREADY DEAD</div>
+            <div class="asshole-message" id="asshole-message">ALRIGHT YOU ARE AN ASSHOLE</div>
+            <div class="reset-container" id="reset-container">
+                <button id="reset-button">REDEEM YOURSELF</button>
+                <div class="reset-message">
+                    You committed terrible deeds...<br>
+                    <span style="color: #ff6b6b; font-size: 2rem;">BUT YOU CAN BE A GOOD PERSON</span><br>
+                    Reset your wish to begin anew.
+                </div>
+            </div>
+            <!-- Falling flowers will be generated here -->
+        </div>
+    </div>
 
-<div class="flower" id="flower"></div>
-<div class="message" id="message"></div>
-
-<div class="reset-box" id="resetBox">
-  <button onclick="resetGame()">RESET</button>
-  <p>you commited terrible deeds<br>you can be a good person<br>but you can reset</p>
-</div>
-
-<script>
-let touched = 0;
-const flower = document.getElementById("flower");
-const message = document.getElementById("message");
-const resetBox = document.getElementById("resetBox");
-
-const alreadyReset = localStorage.getItem("resetOnce");
-
-flower.addEventListener("click", () => {
-
-  // If user already reset before
-  if (alreadyReset && touched === 0) {
-    document.body.classList.add("dead");
-    message.textContent = "all right u are an asshole";
-    resetBox.style.display = "block";
-    return;
-  }
-
-  touched++;
-
-  if (touched === 1) {
-    message.textContent = "you touched a flower ur gonna die";
-  } else if (touched === 2) {
-    document.body.classList.add("dead");
-    message.textContent = "you are already dead";
-    resetBox.style.display = "block";
-  }
-});
-
-// Create small flowers
-for (let i = 0; i < 20; i++) {
-  const f = document.createElement("div");
-  f.className = "small";
-  f.style.left = Math.random() * window.innerWidth + "px";
-  f.style.top = Math.random() * window.innerHeight + "px";
-  f.style.animationDelay = Math.random() * 5 + "s";
-  document.body.appendChild(f);
-}
-
-function resetGame() {
-  localStorage.setItem("resetOnce", "true");
-  location.reload();
-}
-</script>
-
+    <script>
+        // Elements
+        const gameArea = document.getElementById('game-area');
+        const messagePanel = document.getElementById('message-panel');
+        const panelMessage = document.getElementById('panel-message');
+        const flowerGarden = document.getElementById('flower-garden');
+        const flowerCounter = document.getElementById('flower-counter');
+        const gardenTitle = document.getElementById('garden-title');
+        const deathMessage = document.getElementById('death-message');
+        const assholeMessage = document.getElementById('asshole-message');
+        const resetContainer = document.getElementById('reset-container');
+        const resetButton = document.getElementById('reset-button');
+        const body = document.body;
+        
+        // State variables
+        let isDead = false;
+        let flowersTouched = 0;
+        let resetCount = 0;
+        let isAssholeMode = false;
+        let activeFlowers = [];
+        let flowerMessages = [
+            "I bring life",
+            "I bring color",
+            "I bring joy",
+            "I bring peace",
+            "I bring love",
+            "I bring hope",
+            "I bring light",
+            "I bring beauty",
+            "I bring dreams",
+            "I bring magic",
+            "I bring wonder",
+            "I bring eternity"
+        ];
+        
+        let deathMessages = [
+            "YOU TOUCHED ME...",
+            "MY PETALS WILT...",
+            "COLORS FADE AWAY...",
+            "LIFE DRAINS OUT...",
+            "HOPE IS LOST...",
+            "DARKNESS COMES...",
+            "BEAUTY DIES...",
+            "JOY IS GONE...",
+            "LOVE TURNS SOUR...",
+            "DREAMS SHATTER...",
+            "MAGIC FADES...",
+            "ETERNITY ENDS..."
+        ];
+        
+        let currentFlowerMessage = 0;
+        let colorInterval;
+        let fallingInterval;
+        
+        // Color palettes for flowers
+        const colorPalettes = [
+            { petal1: '#FF6B6B', petal2: '#FF8E53', center1: '#FFD166', center2: '#FFA502', stem1: '#2ED573', stem2: '#1DD1A1' },
+            { petal1: '#EF476F', petal2: '#FFD166', center1: '#06D6A0', center2: '#118AB2', stem1: '#073B4C', stem2: '#EF476F' },
+            { petal1: '#7209B7', petal2: '#3A86FF', center1: '#FB5607', center2: '#8338EC', stem1: '#FF006E', stem2: '#FFBE0B' },
+            { petal1: '#4ECDC4', petal2: '#FFE66D', center1: '#FF6B6B', center2: '#1A535C', stem1: '#FFE66D', stem2: '#4ECDC4' },
+            { petal1: '#6A0572', petal2: '#AB83A1', center1: '#3C91E6', center2: '#9FD356', stem1: '#342E37', stem2: '#FAFFFD' },
+            { petal1: '#FF5E5B', petal2: '#D8D8D8', center1: '#FFED66', center2: '#F9F9F9', stem1: '#5B5B5B', stem2: '#2F2F2F' }
+        ];
+        
+        // Initialize garden flowers (static side panel)
+        function createGardenFlowers() {
+            flowerGarden.innerHTML = '';
+            
+            for (let i = 0; i < 6; i++) {
+                const palette = colorPalettes[i];
+                const flower = document.createElement('div');
+                flower.className = 'garden-flower';
+                flower.style.setProperty('--petal-color1', palette.petal1);
+                flower.style.setProperty('--petal-color2', palette.petal2);
+                flower.style.setProperty('--center-color1', palette.center1);
+                flower.style.setProperty('--center-color2', palette.center2);
+                flower.style.setProperty('--stem-color1', palette.stem1);
+                flower.style.setProperty('--stem-color2', palette.stem2);
+                
+                // Create petals (8 petals)
+                for (let j = 0; j < 8; j++) {
+                    const petal = document.createElement('div');
+                    petal.className = 'garden-petal';
+                    petal.style.transform = `rotate(${j * 45}deg) translateY(-40px)`;
+                    petal.style.zIndex = j % 2;
+                    flower.appendChild(petal);
+                }
+                
+                // Create center
+                const center = document.createElement('div');
+                center.className = 'garden-center';
+                flower.appendChild(center);
+                
+                // Create stem
+                const stem = document.createElement('div');
+                stem.className = 'garden-stem';
+                flower.appendChild(stem);
+                
+                flowerGarden.appendChild(flower);
+            }
+        }
+        
+        // Create a falling flower
+        function createFallingFlower() {
+            if (isDead || activeFlowers.length >= 15) return;
+            
+            const flower = document.createElement('div');
+            flower.className = 'falling-flower';
+            
+            // Random position and properties
+            const startX = Math.random() * (gameArea.clientWidth - 100);
+            const palette = colorPalettes[Math.floor(Math.random() * colorPalettes.length)];
+            const fallDuration = 10 + Math.random() * 20;
+            const flowerId = Date.now() + Math.random();
+            
+            // Set CSS custom properties
+            flower.style.setProperty('--petal-color1', palette.petal1);
+            flower.style.setProperty('--petal-color2', palette.petal2);
+            flower.style.setProperty('--center-color1', palette.center1);
+            flower.style.setProperty('--center-color2', palette.center2);
+            flower.style.setProperty('--fall-duration', `${fallDuration}s`);
+            flower.style.setProperty('--current-y', '0px');
+            flower.style.setProperty('--current-rotate', '0deg');
+            
+            flower.style.left = `${startX}px`;
+            flower.style.top = '-100px';
+            
+            // Create petals (6 petals for falling flowers)
+            for (let i = 0; i < 6; i++) {
+                const petal = document.createElement('div');
+                petal.className = 'falling-petal';
+                petal.style.transform = `rotate(${i * 60}deg) translateY(-25px)`;
+                petal.style.zIndex = i % 2;
+                flower.appendChild(petal);
+            }
+            
+            // Create center
+            const center = document.createElement('div');
+            center.className = 'falling-center';
+            flower.appendChild(center);
+            
+            // Store flower data
+            flower.dataset.id = flowerId;
+            flower.dataset.messageIndex = currentFlowerMessage;
+            flower.dataset.hasJumped = 'false';
+            flower.dataset.palette = JSON.stringify(palette);
+            
+            currentFlowerMessage = (currentFlowerMessage + 1) % flowerMessages.length;
+            
+            // Add to game area and active flowers
+            gameArea.appendChild(flower);
+            activeFlowers.push({
+                element: flower,
+                id: flowerId,
+                palette: palette,
+                messageIndex: flower.dataset.messageIndex
+            });
+            
+            // Start falling animation
+            setTimeout(() => {
+                if (flower.parentNode) {
+                    flower.classList.add('falling');
+                }
+            }, 100);
+            
+            // Remove flower when it falls off screen
+            setTimeout(() => {
+                if (flower.parentNode) {
+                    flower.remove();
+                    activeFlowers = activeFlowers.filter(f => f.id !== flowerId);
+                }
+            }, fallDuration * 1000);
+            
+            // Add click event
+            flower.addEventListener('click', handleFlowerClick);
+            
+            return flower;
+        }
+        
+        // Handle flower click
+        function handleFlowerClick(e) {
+            if (isDead) {
+                showDeathEffect(e.clientX, e.clientY);
+                return;
+            }
+            
+            const flower = e.currentTarget;
+            
+            // If already jumped, ignore
+            if (flower.dataset.hasJumped === 'true') return;
+            
+            flower.dataset.hasJumped = 'true';
+            flowersTouched++;
+            flowerCounter.textContent = `Flowers Touched: ${flowersTouched}`;
+            
+            // Get message index
+            const messageIndex = parseInt(flower.dataset.messageIndex);
+            
+            // Show flower's message in panel
+            panelMessage.innerHTML = `"${flowerMessages[messageIndex]}"<br><span style="font-size: 1.5rem; color: #aaa;">Flower #${flowersTouched}</span>`;
+            
+            // Update garden flower corresponding to this flower
+            updateGardenFlower(messageIndex % 6, flower.dataset.palette);
+            
+            // Make flower jump
+            makeFlowerJump(flower);
+            
+            // Change all flower colors
+            updateAllFlowerColors();
+            
+            // Create petal particles
+            createPetalParticles(flower);
+            
+            // Check for death condition
+            if (flowersTouched >= 6) {
+                setTimeout(() => {
+                    if (!isDead) {
+                        startDeathSequence();
+                    }
+                }, 1000);
+            }
+        }
+        
+        // Make a flower jump
+        function makeFlowerJump(flower) {
+            // Store current position
+            const rect = flower.getBoundingClientRect();
+            flower.style.setProperty('--current-y', `${rect.top}px`);
+            flower.style.setProperty('--current-rotate', `${Math.random() * 360}deg`);
+            
+            // Jump animation
+            flower.classList.remove('falling');
+            flower.classList.add('jumping');
+            
+            // Remove after jump
+            setTimeout(() => {
+                if (flower.parentNode) {
+                    flower.remove();
+                    activeFlowers = activeFlowers.filter(f => f.element !== flower);
+                }
+            }, 1500);
+        }
+        
+        // Update garden flower (highlight corresponding flower in side panel)
+        function updateGardenFlower(index, paletteStr) {
+            const gardenFlowers = flowerGarden.querySelectorAll('.garden-flower');
+            if (gardenFlowers[index]) {
+                const palette = JSON.parse(paletteStr);
+                gardenFlowers[index].classList.add('message-flower');
+                
+                // Update colors
+                gardenFlowers[index].style.setProperty('--petal-color1', palette.petal1);
+                gardenFlowers[index].style.setProperty('--petal-color2', palette.petal2);
+                gardenFlowers[index].style.setProperty('--center-color1', palette.center1);
+                gardenFlowers[index].style.setProperty('--center-color2', palette.center2);
+                
+                // Remove highlight after delay
+                setTimeout(() => {
+                    gardenFlowers[index].classList.remove('message-flower');
+                }, 2000);
+            }
+        }
+        
+        // Update all active flower colors
+        function updateAllFlowerColors() {
+            if (isDead) return;
+            
+            // Update falling flowers
+            activeFlowers.forEach(flowerData => {
+                const newPalette = colorPalettes[Math.floor(Math.random() * colorPalettes.length)];
+                flowerData.palette = newPalette;
+                
+                const petals = flowerData.element.querySelectorAll('.falling-petal');
+                petals.forEach(petal => {
+                    petal.style.background = `linear-gradient(135deg, ${newPalette.petal1}, ${newPalette.petal2})`;
+                });
+                
+                const center = flowerData.element.querySelector('.falling-center');
+                if (center) {
+                    center.style.background = `linear-gradient(135deg, ${newPalette.center1}, ${newPalette.center2})`;
+                    center.style.filter = `drop-shadow(0 0 8px ${newPalette.center1})`;
+                }
+            });
+            
+            // Update garden flowers occasionally
+            if (Math.random() > 0.7) {
+                const gardenFlowers = flowerGarden.querySelectorAll('.garden-flower');
+                gardenFlowers.forEach(flower => {
+                    const palette = colorPalettes[Math.floor(Math.random() * colorPalettes.length)];
+                    flower.style.setProperty('--petal-color1', palette.petal1);
+                    flower.style.setProperty('--petal-color2', palette.petal2);
+                });
+            }
+        }
+        
+        // Create petal particles effect
+        function createPetalParticles(flower) {
+            const rect = flower.getBoundingClientRect();
+            const palette = JSON.parse(flower.dataset.palette);
+            
+            for (let i = 0; i < 8; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'petal-particle';
+                particle.style.left = `${rect.left + rect.width / 2}px`;
+                particle.style.top = `${rect.top + rect.height / 2}px`;
+                particle.style.background = `linear-gradient(135deg, ${palette.petal1}, ${palette.petal2})`;
+                particle.style.transform = `rotate(${i * 45}deg)`;
+                
+                gameArea.appendChild(particle);
+                
+                // Animate particle
+                const angle = (i * 45) * Math.PI / 180;
+                const distance = 100 + Math.random() * 50;
+                const targetX = rect.left + Math.cos(angle) * distance;
+                const targetY = rect.top + Math.sin(angle) * distance;
+                
+                particle.animate([
+                    { 
+                        transform: `translate(0, 0) rotate(0deg)`,
+                        opacity: 1 
+                    },
+                    { 
+                        transform: `translate(${targetX - rect.left}px, ${targetY - rect.top}px) rotate(360deg)`,
+                        opacity: 0 
+                    }
+                ], {
+                    duration: 1000,
+                    easing: 'cubic-bezier(0.4, 0, 0.2, 1)'
+                });
+                
+                // Remove particle after animation
+                setTimeout(() => {
+                    if (particle.parentNode) {
+                        particle.remove();
+                    }
+                }, 1000);
+            }
+        }
+        
+        // Start death sequence
+        function startDeathSequence() {
+            if (isDead) return;
+            isDead = true;
+            
+            // Clear intervals
+            clearInterval(colorInterval);
+            clearInterval(fallingInterval);
+            
+            // Stop all falling flowers
+            activeFlowers.forEach(flowerData => {
+                flowerData.element.classList.remove('falling');
+                flowerData.element.classList.add('dead-flower');
+                flowerData.element.style.cursor = 'not-allowed';
+            });
+            
+            // Update panel
+            messagePanel.classList.add('dead-panel');
+            panelMessage.innerHTML = `"${deathMessages[Math.floor(Math.random() * deathMessages.length)]}"<br><span style="font-size: 2rem; color: #ff6b6b;">YOU'RE GONNA DIE</span>`;
+            gardenTitle.textContent = "💀 DEATH GARDEN 💀";
+            gardenTitle.style.borderColor = 'rgba(255, 0, 0, 0.5)';
+            
+            // Start rainbow background
+            body.classList.add('rainbow-bg');
+            
+            // Show death messages from flowers
+            let deathIndex = 0;
+            const deathInterval = setInterval(() => {
+                if (deathIndex < deathMessages.length) {
+                    panelMessage.innerHTML = `"${deathMessages[deathIndex]}"<br><span style="font-size: 2rem; color: #ff6b6b;">DEATH APPROACHES...</span>`;
+                    deathIndex++;
+                } else {
+                    clearInterval(deathInterval);
+                    showFinalDeath();
+                }
+            }, 800);
+        }
+        
+        // Show final death
+        function showFinalDeath() {
+            // Show death message
+            deathMessage.style.opacity = '1';
+            deathMessage.textContent = "YOU ARE\nALREADY\nDEAD";
+            
+            // Fade to black
+            setTimeout(() => {
+                body.classList.remove('rainbow-bg');
+                body.style.background = 'black';
+                messagePanel.style.background = 'black';
+                messagePanel.style.borderRight = '4px solid #ff0000';
+                
+                // Show reset button
+                setTimeout(() => {
+                    resetContainer.classList.add('fade-in');
+                }, 1500);
+            }, 3000);
+        }
+        
+        // Show death effect when clicking after death
+        function showDeathEffect(x, y) {
+            deathMessage.style.opacity = '1';
+            deathMessage.style.left = `${x}px`;
+            deathMessage.style.top = `${y}px`;
+            deathMessage.style.transform = 'translate(-50%, -50%) scale(1.5)';
+            
+            setTimeout(() => {
+                deathMessage.style.opacity = '0';
+                deathMessage.style.transform = 'translate(-50%, -50%) scale(1)';
+                deathMessage.style.left = '50%';
+                deathMessage.style.top = '50%';
+            }, 1000);
+        }
+        
+        // Reset game
+        function resetGame() {
+            resetCount++;
+            
+            // Reset state
+            isDead = false;
+            flowersTouched = 0;
+            isAssholeMode = resetCount >= 1;
+            activeFlowers = [];
+            currentFlowerMessage = 0;
+            
+            // Clear game area
+            gameArea.innerHTML = `
+                <div class="death-message" id="death-message">YOU ARE ALREADY DEAD</div>
+                <div class="asshole-message" id="asshole-message">ALRIGHT YOU ARE AN ASSHOLE</div>
+                <div class="reset-container" id="reset-container">
+                    <button id="reset-button">REDEEM YOURSELF</button>
+                    <div class="reset-message">
+                        You committed terrible deeds...<br>
+                        <span style="color: #ff6b6b; font-size: 2rem;">BUT YOU CAN BE A GOOD PERSON</span><br>
+                        Reset your wish to begin anew.
+                    </div>
+                </div>
+            `;
+            
+            // Reinitialize elements
+            deathMessage = document.getElementById('death-message');
+            assholeMessage = document.getElementById('asshole-message');
+            resetContainer = document.getElementById('reset-container');
+            resetButton = document.getElementById('reset-button');
+            
+            // Reset panel
+            messagePanel.classList.remove('dead-panel');
+            panelMessage.innerHTML = `Touch the falling flowers<br>Each has a message...<br><span style="font-size: 1.2rem; color: #ff6b6b;">${isAssholeMode ? '⚠️ ASSHOLE MODE ACTIVE ⚠️' : ''}</span>`;
+            gardenTitle.textContent = isAssholeMode ? "😈 CURSED GARDEN 😈" : "🌺 FLOWER GARDEN 🌺";
+            gardenTitle.style.borderColor = isAssholeMode ? 'rgba(255, 0, 0, 0.5)' : 'rgba(255, 107, 107, 0.3)';
+            flowerCounter.textContent = `Flowers Touched: 0 | Resets: ${resetCount}`;
+            
+            // Reset body
+            body.style.background = '#0a0a1a';
+            body.classList.remove('rainbow-bg');
+            
+            // Recreate garden flowers
+            createGardenFlowers();
+            
+            // Start falling flowers again
+            startFallingFlowers();
+            
+            // If asshole mode, make first touch trigger instant death
+            if (isAssholeMode) {
+                panelMessage.innerHTML = `ASSHOLE MODE ACTIVE<br><span style="font-size: 1.5rem; color: #ff0000;">First touch = Instant Death</span>`;
+            }
+            
+            // Event listener for reset button
+            resetButton.addEventListener('click', resetGame);
+        }
+        
+        // Start falling flowers
+        function startFallingFlowers() {
+            // Create initial flowers
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => createFallingFlower(), i * 500);
+            }
+            
+            // Interval for new flowers
+            fallingInterval = setInterval(() => {
+                if (!isDead && activeFlowers.length < 10) {
+                    createFallingFlower();
+                }
+            }, 1500);
+            
+            // Color change interval
+            colorInterval = setInterval(updateAllFlowerColors, 3000);
+        }
+        
+        // Initialize game
+        function init() {
+            createGardenFlowers();
+            startFallingFlowers();
+            
+            // Event listener for reset button
+            resetButton.addEventListener('click', resetGame);
+            
+            console.log("🌸 FALLING FLOWER CASCADE 🌸");
+            console.log("Each flower has a unique message");
+            console.log("Touch 6 flowers to trigger death sequence");
+            console.log("Reset to play again (Asshole mode activates after reset)");
+        }
+        
+        // Start the game
+        init();
+    </script>
 </body>
 </html>
-
